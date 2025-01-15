@@ -107,6 +107,7 @@ table{
 	border:1px solid rgb(37, 4, 37);
 	border-collapse: collapse;
 	
+	
 }
 th,td{
 	border:1px solid rgb(76, 14, 76);
@@ -116,6 +117,9 @@ th,td{
 th{
 	background-color: rgb(37, 4, 37);
 	color: white;
+}
+tbody{
+	background-color: #e4dada;
 }
 tbody tr:hover{
 	background-color:rgb(222, 161, 46) ;

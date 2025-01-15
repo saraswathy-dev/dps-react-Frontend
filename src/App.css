@@ -45,7 +45,7 @@
 	margin: auto;
 	background-color: rgb(218, 163, 60);
 	width:100%;
-	height: 800px;;
+	height: 100%;
 }
 .inner-card{
 	display: flex;

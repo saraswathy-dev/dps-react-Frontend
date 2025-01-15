@@ -1,7 +1,41 @@
+import React,{useState,useEffect} from 'react';
 import dpsLogo from './assets/DPS.svg';
 import './App.css';
 
+interface Customer{
+	id:number;
+	firstName:string;
+	address:{
+		city:string
+	}
+		birthDate:string
+	
+}
+
 function App() {
+	const [Customer,setCustomer]=useState<Customer[]>([]);
+
+	//Data fetch
+	useEffect(()=>{
+		const fetchData=async()=>{
+			try{
+				const response=await fetch(' https://dummyjson.com/users');
+				const data=await response.json();
+
+				if(data){
+					setCustomer(data.users);
+					console.log(Customer);
+				}
+				else{
+					console.error('unexpected data format',data);
+				}
+			}
+			catch(error){
+				console.log('Error in fetching the data ');
+			}
+		};
+		fetchData();
+	},[]);
 	return (
 		<>
 			<div>
@@ -29,34 +63,27 @@ function App() {
 					</div>
 					
 				</div>
-
+				{/* Table */}
 				<div className='center'>
 					<table>
 						<thead><tr><th>Name</th><th>City</th><th>Birthday</th></tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>sara</td>
-								<td>munich</td>
-								<td>28-11-1998</td>
-							</tr>
-							<tr>
-								<td>sara</td>
-								<td>munich</td>
-								<td>28-11-1998</td>
-							</tr>
-							<tr>
-								<td>sara</td>
-								<td>munich</td>
-								<td>28-11-1998</td>
-							</tr>
+							{
+								Customer.map((Cus)=>(
+									<tr key={Cus.id}>
+										<td>{Cus.firstName}</td>
+										<td>{Cus.address.city}</td>
+										<td>{Cus.birthDate}</td>
+									</tr>
+								))
+							}
+							
 							
 						</tbody>
 					</table>
 				</div>
 			</div>
-			
-			
 		</>
 	);
 }
