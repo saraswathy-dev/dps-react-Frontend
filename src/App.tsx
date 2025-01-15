@@ -29,7 +29,31 @@ function App() {
 					</div>
 					
 				</div>
-				<table><thead><tr><th>Name</th><th>City</th><th>Birthday</th></tr></thead></table>
+
+				<div className='center'>
+					<table>
+						<thead><tr><th>Name</th><th>City</th><th>Birthday</th></tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>sara</td>
+								<td>munich</td>
+								<td>28-11-1998</td>
+							</tr>
+							<tr>
+								<td>sara</td>
+								<td>munich</td>
+								<td>28-11-1998</td>
+							</tr>
+							<tr>
+								<td>sara</td>
+								<td>munich</td>
+								<td>28-11-1998</td>
+							</tr>
+							
+						</tbody>
+					</table>
+				</div>
 			</div>
 			
 			
