@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useMemo} from 'react';
 import dpsLogo from './assets/DPS.svg';
 import './App.css';
 
@@ -14,6 +14,8 @@ interface Customer{
 
 function App() {
 	const [Customer,setCustomer]=useState<Customer[]>([]);
+	const [CitySelected,setCitySelected]=useState<string>('');
+	const [filteredUser,setfilteredUser]=useState<Customer[]>([]);
 
 	//Data fetch
 	useEffect(()=>{
@@ -24,8 +26,7 @@ function App() {
 
 				if(data){
 					setCustomer(data.users);
-					console.log(Customer);
-				}
+					setfilteredUser(data.users);}
 				else{
 					console.error('unexpected data format',data);
 				}
@@ -36,6 +37,18 @@ function App() {
 		};
 		fetchData();
 	},[]);
+
+	//city filtered
+	const filteredCityUser=useMemo(()=>{
+		console.log('city:',CitySelected);
+		if(CitySelected)
+			return setfilteredUser(Customer.filter((cus)=>cus.address.city===CitySelected));
+	
+	},[CitySelected,Customer]);
+	console.log('setfilteredUser is',filteredCityUser);
+	
+	
+	
 	return (
 		<>
 			<div>
@@ -54,7 +67,12 @@ function App() {
 					{/* city */}
 					<div>
 				
-						<label htmlFor='city'>City <select id='city'><option value=''>--choose City--</option>
+						<label htmlFor='city'>City <select id='city' value={CitySelected} 
+							onChange={(e)=>{setCitySelected(e.target.value); console.log(e.target.value);}}>
+							<option value=''>Choose City</option>
+							{Customer.map((Cus)=>(
+								<option key={Cus.id} value={Cus.address.city}>{Cus.address.city}</option>))}
+
 						</select></label>
 					</div>
 					{/* checkbox */}
@@ -70,7 +88,7 @@ function App() {
 						</thead>
 						<tbody>
 							{
-								Customer.map((Cus)=>(
+								filteredUser.map((Cus)=>(
 									<tr key={Cus.id}>
 										<td>{Cus.firstName}</td>
 										<td>{Cus.address.city}</td>
