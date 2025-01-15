@@ -16,6 +16,7 @@ function App() {
 	const [Customer,setCustomer]=useState<Customer[]>([]);
 	const [CitySelected,setCitySelected]=useState<string>('');
 	const [filteredUser,setfilteredUser]=useState<Customer[]>([]);
+	const [searchName,setSearchName]=useState<string>('');
 
 	//Data fetch
 	useEffect(()=>{
@@ -38,14 +39,19 @@ function App() {
 		fetchData();
 	},[]);
 
-	//city filtered
+	//city filter
 	const filteredCityUser=useMemo(()=>{
 		console.log('city:',CitySelected);
-		if(CitySelected)
-			return setfilteredUser(Customer.filter((cus)=>cus.address.city===CitySelected));
+		if(CitySelected)return setfilteredUser(Customer.filter((cus)=>cus.address.city===CitySelected));
 	
 	},[CitySelected,Customer]);
 	console.log('setfilteredUser is',filteredCityUser);
+
+	//name filter
+	const filteredName=useMemo(()=>{
+		return   setfilteredUser( Customer.filter((cus)=>cus.firstName.toLowerCase().includes(searchName.toLowerCase())));
+	},[searchName,Customer]);
+	console.log(filteredName);
 	
 	
 	
@@ -61,15 +67,15 @@ function App() {
 				{/* Input */}
 				<div className='inner-card'>
 					<div>	
-						<label htmlFor='name'>Name <input id='name' type='text' placeholder='search by name'/></label>
+						<label htmlFor='name'>Name <input id='name' type='text' placeholder='search by name' onChange={(e)=>{setSearchName(e.target.value)}}/></label>
 					</div>
 					
 					{/* city */}
 					<div>
 				
-						<label htmlFor='city'>City <select id='city' value={CitySelected} 
-							onChange={(e)=>{setCitySelected(e.target.value); console.log(e.target.value);}}>
-							<option value=''>Choose City</option>
+						<label htmlFor='city'>City <select id='city' value={CitySelected ||''} 
+							onChange={(e)=>{setCitySelected(e.target.value ||''); console.log(e.target.value);}}>
+							<option value="">Choose City</option>
 							{Customer.map((Cus)=>(
 								<option key={Cus.id} value={Cus.address.city}>{Cus.address.city}</option>))}
 
