@@ -45,9 +45,10 @@ select {
 	font-size: 1em;
 	font-weight: 500;
 	font-family: inherit;
-	background-color: #1a1a1a;
+	background-color: #868282;
 	cursor: pointer;
 	transition: border-color 0.25s;
+	
 }
 button:hover,
 input:hover,
@@ -80,7 +81,7 @@ select:focus-visible {
 
 input,
 select,
-textarea {
+textarea,label {
 	width: 100%;
 	padding: 12px 20px;
 	margin: 8px 0;
