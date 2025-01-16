@@ -1,60 +1,82 @@
-import React,{useState,useEffect,useMemo} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dpsLogo from './assets/DPS.svg';
 import './App.css';
 
-interface Customer{
-	id:number;
-	firstName:string;
-	address:{
-		city:string
-	}
-		birthDate:string
-	
+interface Customer {
+	id: number;
+	firstName: string;
+	address: {
+		city: string;
+	};
+	age: number;
+	birthDate: string;
 }
 
 function App() {
-	const [Customer,setCustomer]=useState<Customer[]>([]);
-	const [CitySelected,setCitySelected]=useState<string>('');
-	const [filteredUser,setfilteredUser]=useState<Customer[]>([]);
-	const [searchName,setSearchName]=useState<string>('');
+	const [customers, setCustomer] = useState<Customer[]>([]);
+	const [citySelected, setCitySelected] = useState<string>('');
+	const [filteredUser, setFilteredUser] = useState<Customer[]>([]);
+	const [searchName, setSearchName] = useState<string>('');
+	const [selectOldest, setSelectOldest] = useState<boolean>(false);
+	const [oldestAge, setOldestAge] = useState<string>('');
 
 	//Data fetch
-	useEffect(()=>{
-		const fetchData=async()=>{
-			try{
-				const response=await fetch(' https://dummyjson.com/users');
-				const data=await response.json();
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch(' https://dummyjson.com/users');
+				const data = await response.json();
 
-				if(data){
+				if (data) {
 					setCustomer(data.users);
-					setfilteredUser(data.users);}
-				else{
-					console.error('unexpected data format',data);
+					setFilteredUser(data.users);
+				} else {
+					console.error('unexpected data format', data);
 				}
-			}
-			catch(error){
+			} catch (error) {
 				console.log('Error in fetching the data ');
 			}
 		};
 		fetchData();
-	},[]);
+	}, []);
 
-	//city filter
-	const filteredCityUser=useMemo(()=>{
-		console.log('city:',CitySelected);
-		if(CitySelected)return setfilteredUser(Customer.filter((cus)=>cus.address.city===CitySelected));
-	
-	},[CitySelected,Customer]);
-	console.log('setfilteredUser is',filteredCityUser);
+	//filter duplicate city
+	const cityArray = useMemo(() => {
+		return Array.from(
+			new Set(customers.map((customer) => customer.address.city))
+		);
+	}, [customers]);
 
-	//name filter
-	const filteredName=useMemo(()=>{
-		return   setfilteredUser( Customer.filter((cus)=>cus.firstName.toLowerCase().includes(searchName.toLowerCase())));
-	},[searchName,Customer]);
-	console.log(filteredName);
-	
-	
-	
+	//Name and city filter
+	useEffect(() => {
+		const filteredUser = customers.filter((customer) => {
+			const filteredCity = citySelected
+				? customer.address.city === citySelected
+				: true;
+
+			const filteredName = searchName
+				? customer.firstName
+						.toLowerCase()
+						.includes(searchName.toLowerCase())
+				: true;
+			return filteredCity && filteredName;
+		});
+		setFilteredUser(filteredUser);
+	}, [citySelected, customers, searchName]);
+
+	//Highlight oldest per city
+
+	useEffect(() => {
+		if (filteredUser && filteredUser.length > 0) {
+			const oldestBirthDate = filteredUser.filter(
+				(user) =>
+					user.age === Math.max(...filteredUser.map((u) => u.age))
+			)[0].birthDate;
+			setOldestAge(oldestBirthDate);
+			console.log(oldestBirthDate);
+		}
+	}, [filteredUser]);
+
 	return (
 		<>
 			<div>
@@ -62,48 +84,87 @@ function App() {
 					<img src={dpsLogo} className="logo" alt="DPS logo" />
 				</a>
 			</div>
-			
+
 			<div className="home-card">
 				{/* Input */}
-				<div className='inner-card'>
-					<div>	
-						<label htmlFor='name'>Name <input id='name' type='text' placeholder='search by name' onChange={(e)=>{setSearchName(e.target.value)}}/></label>
+				<div className="inner-card">
+					<div>
+						<label htmlFor="name">
+							Name{' '}
+							<input
+								id="name"
+								type="text"
+								placeholder="search by name"
+								onChange={(e) => {
+									setSearchName(e.target.value);
+								}}
+							/>
+						</label>
 					</div>
-					
+
 					{/* city */}
 					<div>
-				
-						<label htmlFor='city'>City <select id='city' value={CitySelected ||''} 
-							onChange={(e)=>{setCitySelected(e.target.value ||''); console.log(e.target.value);}}>
-							<option value="">Choose City</option>
-							{Customer.map((Cus)=>(
-								<option key={Cus.id} value={Cus.address.city}>{Cus.address.city}</option>))}
-
-						</select></label>
+						<label htmlFor="city">
+							City{' '}
+							<select
+								id="city"
+								value={citySelected || ''}
+								onChange={(e) => {
+									setCitySelected(e.target.value || '');
+									console.log(e.target.value);
+								}}
+							>
+								<option value="">Choose City</option>
+								{cityArray.map((customer) => (
+									<option key={customer} value={customer}>
+										{customer}
+									</option>
+								))}
+							</select>
+						</label>
 					</div>
 					{/* checkbox */}
 					<div>
-						<label htmlFor='oldest city'>Highlight oldest per city <input id='oldestCity' type='checkbox' /></label>
+						<label htmlFor="oldest city">
+							Highlight oldest per city{' '}
+							<input
+								id="oldestCity"
+								type="checkbox"
+								value=""
+								onChange={(e) =>
+									setSelectOldest(e.target.checked)
+								}
+							/>
+						</label>
 					</div>
-					
 				</div>
 				{/* Table */}
-				<div className='center'>
+				<div className="center">
 					<table>
-						<thead><tr><th>Name</th><th>City</th><th>Birthday</th></tr>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>City</th>
+								<th>Birthday</th>
+							</tr>
 						</thead>
 						<tbody>
-							{
-								filteredUser.map((Cus)=>(
-									<tr key={Cus.id}>
-										<td>{Cus.firstName}</td>
-										<td>{Cus.address.city}</td>
-										<td>{Cus.birthDate}</td>
-									</tr>
-								))
-							}
-							
-							
+							{filteredUser.map((customer) => (
+								<tr
+									key={customer.id}
+									style={{
+										backgroundColor:
+											selectOldest &&
+											oldestAge === customer.birthDate
+												? 'skyblue'
+												: 'white',
+									}}
+								>
+									<td>{customer.firstName}</td>
+									<td>{customer.address.city}</td>
+									<td>{customer.birthDate}</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>

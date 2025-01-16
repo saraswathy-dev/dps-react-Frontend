@@ -48,7 +48,6 @@ select {
 	background-color: #e4dada;
 	cursor: pointer;
 	transition: border-color 0.25s;
-	
 }
 button:hover,
 input:hover,
@@ -76,12 +75,13 @@ textarea:focus-visible,
 select:focus,
 select:focus-visible {
 	outline: 4px auto -webkit-focus-ring-color;
-	outline-color:rgb(37, 4, 37);
+	outline-color: rgb(37, 4, 37);
 }
 
 input,
 select,
-textarea,label {
+textarea,
+label {
 	width: 100%;
 	padding: 12px 20px;
 	margin: 8px 0;
@@ -101,28 +101,27 @@ textarea:focus {
 	border: 1px solid rgb(37, 4, 37);
 }
 
-table{
-	width:98%;
+table {
+	width: 98%;
 	margin: 20px auto;
-	border:1px solid rgb(37, 4, 37);
+	border: 1px solid rgb(37, 4, 37);
 	border-collapse: collapse;
-	
-	
 }
-th,td{
-	border:1px solid rgb(76, 14, 76);
-	padding:5px;
+th,
+td {
+	border: 1px solid rgb(76, 14, 76);
+	padding: 5px;
 	text-align: center;
 }
-th{
+th {
 	background-color: rgb(37, 4, 37);
 	color: white;
 }
-tbody{
+tbody {
 	background-color: #e4dada;
 }
-tbody tr:hover{
-	background-color:rgb(222, 161, 46) ;
+tbody tr:hover {
+	background-color: rgb(222, 161, 46);
 }
 
 @media (prefers-color-scheme: light) {
@@ -131,7 +130,7 @@ tbody tr:hover{
 		background-color: #ffffff;
 	}
 	a:hover {
-		color:rgb(37, 4, 37);
+		color: rgb(37, 4, 37);
 	}
 	button {
 		background-color: #f9f9f9;
