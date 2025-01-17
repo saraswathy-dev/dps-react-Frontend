@@ -17,6 +17,7 @@ function App() {
 	const [citySelected, setCitySelected] = useState<string>('');
 	const [filteredUser, setFilteredUser] = useState<Customer[]>([]);
 	const [searchName, setSearchName] = useState<string>('');
+	const [debounceSearchName, setDebounceSearchName] = useState<string>('');
 	const [selectOldest, setSelectOldest] = useState<boolean>(false);
 	const [oldestAge, setOldestAge] = useState<string>('');
 
@@ -47,6 +48,17 @@ function App() {
 		);
 	}, [customers]);
 
+	//debounceSearchName
+
+	useEffect(() => {
+		const delayHandler = setTimeout(() => {
+			setDebounceSearchName(searchName);
+		}, 1000);
+		return () => {
+			clearTimeout(delayHandler);
+		};
+	}, [searchName]);
+
 	//Name and city filter
 	useEffect(() => {
 		const filteredUser = customers.filter((customer) => {
@@ -57,12 +69,12 @@ function App() {
 			const filteredName = searchName
 				? customer.firstName
 						.toLowerCase()
-						.includes(searchName.toLowerCase())
+						.includes(debounceSearchName.toLowerCase())
 				: true;
 			return filteredCity && filteredName;
 		});
 		setFilteredUser(filteredUser);
-	}, [citySelected, customers, searchName]);
+	}, [citySelected, customers, debounceSearchName, searchName]);
 
 	//Highlight oldest per city
 
@@ -73,7 +85,6 @@ function App() {
 					user.age === Math.max(...filteredUser.map((u) => u.age))
 			)[0].birthDate;
 			setOldestAge(oldestBirthDate);
-			console.log(oldestBirthDate);
 		}
 	}, [filteredUser]);
 
