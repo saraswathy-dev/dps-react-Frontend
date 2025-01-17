@@ -117,3 +117,15 @@ textarea:focus {
 		background-color: #f9f9f9;
 	}
 }
+@media (max-width: 768px) {
+	input,
+	select,
+	textarea,
+	label {
+		width: 100%;
+		padding: 7px 12px;
+		display: inline-block;
+		border-radius: 8px;
+		box-sizing: border-box;
+	}
+}

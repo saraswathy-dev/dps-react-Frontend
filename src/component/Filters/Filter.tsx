@@ -68,7 +68,7 @@ const Filter: React.FC<FilterProps> = ({
 				</label>
 			</div>
 			{/* checkbox */}
-			<div>
+			<div className="checkbox-container">
 				<label htmlFor="oldest city">
 					Highlight oldest per city{' '}
 					<input

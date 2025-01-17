@@ -29,3 +29,30 @@
 .input-container button:hover {
 	color: rgba(96, 95, 95, 0.87);
 }
+
+@media (max-width: 768px) {
+	/* .inner-card {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	} */
+	.inner-card > div {
+		padding: 0px;
+		margin: 0px;
+	}
+	.input-container {
+		width: 100%;
+	}
+	.input-container input {
+		width: 100%;
+		font-size: 16px;
+	}
+	.input-container button {
+		font-size: 12px;
+	}
+
+	.checkbox-container {
+		flex-direction: row;
+		align-items: center;
+	}
+}

@@ -8,6 +8,12 @@ interface TableProps {
 	selectOldest: boolean;
 	oldestAge: string;
 }
+function formatDate(input: string): string {
+	const [year, month, day] = input.split('-');
+	const padMonth = month.padStart(2, '0');
+	const padDay = day.padStart(2, '0');
+	return `${padDay}-${padMonth}-${year}`;
+}
 
 const Table: React.FC<TableProps> = ({
 	customers,
@@ -40,7 +46,7 @@ const Table: React.FC<TableProps> = ({
 							>
 								<td>{customer.firstName}</td>
 								<td>{customer.address.city}</td>
-								<td>{customer.birthDate}</td>
+								<td>{formatDate(customer.birthDate)}</td>
 							</tr>
 						))
 					) : (
