@@ -1,8 +1,12 @@
+/* eslint-disable indent */
 import { useState, useEffect, useMemo } from 'react';
-import dpsLogo from './assets/DPS.svg';
 import './App.css';
+import Header from './component/Header/Header';
+import Filter from './component/Filters/Filter';
+import Table from './component/Table/Table';
+import Spinner from './component/Spinner/Spinner';
 
-interface Customer {
+export interface Customer {
 	id: number;
 	firstName: string;
 	address: {
@@ -10,6 +14,10 @@ interface Customer {
 	};
 	age: number;
 	birthDate: string;
+}
+
+interface ApiResponse {
+	users: Customer[];
 }
 
 function App() {
@@ -20,26 +28,46 @@ function App() {
 	const [debounceSearchName, setDebounceSearchName] = useState<string>('');
 	const [selectOldest, setSelectOldest] = useState<boolean>(false);
 	const [oldestAge, setOldestAge] = useState<string>('');
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
 
 	//Data fetch
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch(' https://dummyjson.com/users');
-				const data = await response.json();
+				setLoading(true);
+				setError(null);
+				const response = await fetch('https://dummyjson.com/users');
+				if (!response.ok) {
+					throw new Error(
+						`HTTP error occured! Status:${response.status}`
+					);
+				}
+				const data: ApiResponse = await response.json();
 
-				if (data) {
+				if (data && data.users) {
 					setCustomer(data.users);
 					setFilteredUser(data.users);
 				} else {
-					console.error('unexpected data format', data);
+					throw new Error('unexpected data format');
 				}
 			} catch (error) {
-				console.log('Error in fetching the data ');
+				const errorMessage =
+					(error as Error).message || 'Error in fetching the data';
+				setError(errorMessage);
+			} finally {
+				setLoading(false);
 			}
 		};
 		fetchData();
 	}, []);
+
+	//error handling
+	useEffect(() => {
+		if (error) {
+			window.alert(error);
+		}
+	}, [error]);
 
 	//filter duplicate city
 	const cityArray = useMemo(() => {
@@ -49,7 +77,6 @@ function App() {
 	}, [customers]);
 
 	//debounceSearchName
-
 	useEffect(() => {
 		const delayHandler = setTimeout(() => {
 			setDebounceSearchName(searchName);
@@ -77,7 +104,6 @@ function App() {
 	}, [citySelected, customers, debounceSearchName, searchName]);
 
 	//Highlight oldest per city
-
 	useEffect(() => {
 		if (filteredUser && filteredUser.length > 0) {
 			const oldestBirthDate = filteredUser.filter(
@@ -90,95 +116,26 @@ function App() {
 
 	return (
 		<>
-			<div>
-				<a href="https://www.digitalproductschool.io/" target="_blank">
-					<img src={dpsLogo} className="logo" alt="DPS logo" />
-				</a>
-			</div>
-
+			<Header></Header>
 			<div className="home-card">
-				{/* Input */}
-				<div className="inner-card">
-					<div>
-						<label htmlFor="name">
-							Name{' '}
-							<input
-								id="name"
-								type="text"
-								placeholder="search by name"
-								onChange={(e) => {
-									setSearchName(e.target.value);
-								}}
-							/>
-						</label>
-					</div>
-
-					{/* city */}
-					<div>
-						<label htmlFor="city">
-							City{' '}
-							<select
-								id="city"
-								value={citySelected || ''}
-								onChange={(e) => {
-									setCitySelected(e.target.value || '');
-									console.log(e.target.value);
-								}}
-							>
-								<option value="">Choose City</option>
-								{cityArray.map((customer) => (
-									<option key={customer} value={customer}>
-										{customer}
-									</option>
-								))}
-							</select>
-						</label>
-					</div>
-					{/* checkbox */}
-					<div>
-						<label htmlFor="oldest city">
-							Highlight oldest per city{' '}
-							<input
-								id="oldestCity"
-								type="checkbox"
-								value=""
-								onChange={(e) =>
-									setSelectOldest(e.target.checked)
-								}
-							/>
-						</label>
-					</div>
-				</div>
-				{/* Table */}
-				<div className="center">
-					<table>
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>City</th>
-								<th>Birthday</th>
-							</tr>
-						</thead>
-						<tbody>
-							{filteredUser.map((customer) => (
-								<tr
-									key={customer.id}
-									style={{
-										backgroundColor:
-											selectOldest &&
-											oldestAge === customer.birthDate
-												? 'skyblue'
-												: 'white',
-									}}
-								>
-									<td>{customer.firstName}</td>
-									<td>{customer.address.city}</td>
-									<td>{customer.birthDate}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
+				<Filter
+					searchName={searchName}
+					setSearchName={setSearchName}
+					citySelected={citySelected}
+					setCitySelected={setCitySelected}
+					selectOldest={selectOldest}
+					setSelectOldest={setSelectOldest}
+					cityArray={cityArray}
+				></Filter>
+				{loading ? (
+					<Spinner></Spinner>
+				) : (
+					<Table
+						customers={filteredUser}
+						selectOldest={selectOldest}
+						oldestAge={oldestAge}
+					></Table>
+				)}
 			</div>
 		</>
 	);
