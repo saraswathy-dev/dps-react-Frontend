@@ -92,7 +92,6 @@ function App() {
 			const filteredCity = citySelected
 				? customer.address.city === citySelected
 				: true;
-
 			const filteredName = searchName
 				? customer.firstName
 						.toLowerCase()

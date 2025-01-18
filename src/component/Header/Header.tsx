@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import dpsLogo from '../../assets/DPS.svg';
 import './Header.css';
 const Header = () => {

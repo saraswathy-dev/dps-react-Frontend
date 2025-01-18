@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import React from 'react';
 import './Table.css';
 import { Customer } from '../../App';
